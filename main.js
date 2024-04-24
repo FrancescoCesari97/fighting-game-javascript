@@ -12,3 +12,10 @@ class Sprite {
     this.position = position;
   }
 }
+
+const player = new Sprite({
+  x: 0,
+  y: 0,
+});
+
+console.log(player);
