@@ -26,10 +26,15 @@ const player = new Sprite({
 player.draw();
 
 const enemy = new Sprite({
-  x: 1000,
+  x: 800,
   y: 0,
 });
 
 enemy.draw();
 
-console.log(player);
+function animate() {
+  window.requestAnimationFrame(animate);
+  console.log("go");
+}
+
+animate();
