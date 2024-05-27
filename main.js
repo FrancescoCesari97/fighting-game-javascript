@@ -132,6 +132,38 @@ function swingCollision({ swing1, swing2 }) {
   );
 }
 
+function determineWinner({ player, enemy, timerId }) {
+  clearTimeout(timerId);
+  if (player.health === enemy.health) {
+    const tieElement = document.querySelector("#Winner");
+    tieElement.innerHTML = "<h2>Tie</h2>";
+    tieElement.classList.add("display-flex");
+  } else if (player.health > enemy.health) {
+    const tieElement = document.querySelector("#Winner");
+    tieElement.innerHTML = "<h2>player-1 Won</h2>";
+    tieElement.classList.add("display-flex");
+  } else {
+    const tieElement = document.querySelector("#Winner");
+    tieElement.innerHTML = "<h2>player-2 Won</h2>";
+    tieElement.classList.add("display-flex");
+  }
+}
+
+let timer = 60;
+let timerId;
+function decreaseTimer() {
+  if (timer > 0) {
+    timerId = setTimeout(decreaseTimer, 1000);
+    timer--;
+    document.querySelector("#timer").innerHTML = timer;
+  }
+  if (timer === 0) {
+    determineWinner({ player, enemy, timerId });
+  }
+}
+
+decreaseTimer();
+
 function animate() {
   window.requestAnimationFrame(animate);
 
@@ -180,6 +212,12 @@ function animate() {
     enemy.isAttacking = false;
     player.health -= 20;
     document.querySelector("#playerHealth").style.width = player.health + "%";
+  }
+
+  // end the game based on health
+
+  if (enemy.health <= 0 || player.health <= 0) {
+    determineWinner({ player, enemy, timerId });
   }
 }
 
