@@ -8,68 +8,27 @@ canvas.height = 576;
 screen.fillRect(0, 0, canvas.width, canvas.height);
 
 const gravity = 0.5;
-class Sprite {
-  constructor({ position, velocity, color = "green", offset }) {
-    this.position = position;
-    this.velocity = velocity;
-    this.height = 150;
-    this.width = 50;
 
-    this.attackSwing = {
-      position: {
-        x: this.position.x,
-        y: this.position.y,
-      },
+const background = new Sprite({
+  position: {
+    x: 0,
+    y: 0,
+  },
+  imgSrc: "./img/Background-1.png",
+});
 
-      offset,
-
-      width: 100,
-      height: 50,
-    };
-    this.color = color;
-    this.isAttacking;
-    this.health = 100;
-  }
-
-  draw() {
-    screen.fillStyle = this.color;
-    screen.fillRect(this.position.x, this.position.y, this.width, this.height);
-
-    // attackSwing
-    if (this.isAttacking) {
-      screen.fillStyle = "red";
-      screen.fillRect(
-        this.attackSwing.position.x,
-        this.attackSwing.position.y,
-        this.attackSwing.width,
-        this.attackSwing.height
-      );
-    }
-  }
-
-  update() {
-    this.draw();
-
-    this.attackSwing.position.x = this.position.x + this.attackSwing.offset.x;
-    this.attackSwing.position.y = this.position.y;
-
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
-
-    if (this.position.y + this.height + this.velocity.y >= canvas.height) {
-      this.velocity.y = 0;
-    } else this.velocity.y += gravity;
-  }
-  attack() {
-    this.isAttacking = true;
-    setTimeout(() => {
-      this.isAttacking = false;
-    }, 100);
-  }
-}
+const shop = new Sprite({
+  position: {
+    x: 780,
+    y: 295,
+  },
+  imgSrc: "./img/shop_anim.png",
+  scale: 1.5,
+  frameMax: 6,
+});
 
 // player.draw();
-const player = new Sprite({
+const player = new Fighter({
   position: {
     x: 0,
     y: 0,
@@ -86,7 +45,7 @@ const player = new Sprite({
 });
 
 // enemy.draw();
-const enemy = new Sprite({
+const enemy = new Fighter({
   position: {
     x: 800,
     y: 0,
@@ -121,47 +80,6 @@ const keys = {
 
 let lastKey;
 
-function swingCollision({ swing1, swing2 }) {
-  return (
-    swing1.attackSwing.position.x + swing1.attackSwing.width >=
-      swing2.position.x &&
-    swing1.attackSwing.position.x <= swing2.position.x + swing2.width &&
-    swing1.attackSwing.position.y + swing1.attackSwing.height >=
-      swing2.position.y &&
-    swing1.attackSwing.position.y <= swing2.position.y + swing2.height
-  );
-}
-
-function determineWinner({ player, enemy, timerId }) {
-  clearTimeout(timerId);
-  if (player.health === enemy.health) {
-    const tieElement = document.querySelector("#Winner");
-    tieElement.innerHTML = "<h2>Tie</h2>";
-    tieElement.classList.add("display-flex");
-  } else if (player.health > enemy.health) {
-    const tieElement = document.querySelector("#Winner");
-    tieElement.innerHTML = "<h2>player-1 Won</h2>";
-    tieElement.classList.add("display-flex");
-  } else {
-    const tieElement = document.querySelector("#Winner");
-    tieElement.innerHTML = "<h2>player-2 Won</h2>";
-    tieElement.classList.add("display-flex");
-  }
-}
-
-let timer = 60;
-let timerId;
-function decreaseTimer() {
-  if (timer > 0) {
-    timerId = setTimeout(decreaseTimer, 1000);
-    timer--;
-    document.querySelector("#timer").innerHTML = timer;
-  }
-  if (timer === 0) {
-    determineWinner({ player, enemy, timerId });
-  }
-}
-
 decreaseTimer();
 
 function animate() {
@@ -169,7 +87,8 @@ function animate() {
 
   screen.fillStyle = "black";
   screen.fillRect(0, 0, canvas.width, canvas.height);
-
+  background.update();
+  shop.update();
   player.update();
   enemy.update();
 
